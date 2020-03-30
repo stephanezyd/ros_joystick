@@ -1,0 +1,14 @@
+<launch>
+
+    <node name="joy_node" pkg="joy" type="joy_node"/>
+    <node name="joystick" pkg="joystick" type="joystick_node" />
+
+        <param name="num_axe_lin" value="1" type="int"/>
+        <param name="num_axe_ang" value="2" type="int"/>
+        <param name="factor_axe_lin" value="1.0" type="double"/>
+        <param name="factor_axe_ang" value="2.0" type="double"/>
+        <param name="pub_name" value="cmd_vel" type="string"/>
+
+
+
+</launch>
