@@ -16,6 +16,7 @@ ros::Publisher  pub;
 int num_axe_lin, num_axe_ang;//选择手柄的数据
 double factor_axe_lin, factor_axe_ang;//控制系数
 int Button_Select;//对应手柄select键
+int Button_up_down, Button_left_right;//对应手柄上下左右
 bool flag_button_select;
 std::string pub_name;//发布的消息名称
 geometry_msgs::Twist speed;
@@ -25,6 +26,9 @@ void joy_callBack(const sensor_msgs::Joy::ConstPtr &joy)
     double linear_speed = joy->axes[num_axe_lin]*factor_axe_lin;
     double angular_speed = joy->axes[num_axe_ang]*factor_axe_ang;
     Button_Select = joy->buttons[10];
+    Button_up_down = joy->axes[7];
+    Button_left_right = joy->axes[6];
+
 
     if(Button_Select==1){
         if(flag_button_select)
@@ -33,10 +37,27 @@ void joy_callBack(const sensor_msgs::Joy::ConstPtr &joy)
             flag_button_select = true;
     }
 
+    if(Button_up_down>0){
+        factor_axe_lin += 0.05;
+        ROS_INFO("set factor_axe_lin: %f\n",factor_axe_lin);
+    }
+    if(Button_up_down<0){
+        factor_axe_lin = std::max(0.0,factor_axe_lin - 0.05);
+        ROS_INFO("set factor_axe_lin: %f\n",factor_axe_lin);
+    }
+    if(Button_left_right<0){
+        factor_axe_ang += 0.05;
+        ROS_INFO("set factor_axe_ang: %f\n", factor_axe_ang);
+    }
+    if(Button_left_right>0) {
+        factor_axe_ang = std::max(0.0, factor_axe_ang-0.05);
+        ROS_INFO("set factor_axe_ang: %f\n", factor_axe_ang);
+    }
+
     speed.linear.x = linear_speed;
     speed.angular.z = angular_speed;
 
-    ROS_INFO("joystick linear:%f, angular:%f\n",speed.linear.x, speed.angular.z);
+    ROS_INFO("joystick linear speed:%f, angular speed:%f\n",speed.linear.x, speed.angular.z);
     if(Button_Select == 1)
         ROS_INFO("Button_Select\n");
 
